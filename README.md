@@ -241,22 +241,63 @@ This enables systematic comparison between experiments instead of relying on iso
 
 ---
 
-## 9. Training Framework
+## 9. Training Framework & Quickstart
 
 The project builds on technologies explored during the Marconi internship:
 
 * Python
 * PyTorch
-* TensorFlow
-* Hugging Face Transformers
 * Hugging Face Datasets
-* Hugging Face Trainer
-* NumPy
-* Matplotlib
 * scikit-learn
-* Weights & Biases
+* Weights & Biases (W&B)
 
-Where practical, the final implementation will favor a **standardized and reproducible Hugging Face/PyTorch workflow**.
+### Running the Training Pipeline (`train.py`)
+
+A unified, single-execution training script (`train.py`) is provided for local execution and experiment tracking.
+
+#### 1. Setup Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+#### 2. Single-Command Training Examples
+
+* **Default Run (ResNet-50 with W&B logging)**:
+  ```bash
+  python train.py
+  ```
+
+* **Architecture Benchmarking (DenseNet-121 with Ben Graham Preprocessing)**:
+  ```bash
+  python train.py --arch densenet121 --epochs 15 --batch-size 16 --ben-graham
+  ```
+
+* **Modern Vision Transformers (Swin Transformer / ConvNeXt)**:
+  ```bash
+  python train.py --arch swin_t --epochs 10 --batch-size 16
+  python train.py --arch convnext_tiny --epochs 10 --batch-size 16
+  ```
+
+* **Local Offline Run (without Weights & Biases)**:
+  ```bash
+  python train.py --arch mobilenet_v2 --epochs 5 --no-wandb
+  ```
+
+#### 3. Command-Line Options
+
+| Argument | Default | Description |
+| :--- | :--- | :--- |
+| `--arch`, `-a` | `resnet50` | Architecture (`resnet50`, `resnet18`, `densenet121`, `convnext_tiny`, `swin_t`, `mobilenet_v2`) |
+| `--dataset`, `-d` | `sngsfydy/aptos` | Hugging Face dataset identifier |
+| `--epochs`, `-e` | `10` | Number of training epochs |
+| `--batch-size`, `-b` | `16` | Batch size per step |
+| `--lr` | `1e-4` | Learning rate |
+| `--ben-graham` | `False` | Apply Ben Graham circular crop & local color subtraction |
+| `--device` | `auto` | Execution device (`auto`, `cuda`, `cpu`, `mps`) |
+| `--wandb-project` | `diabetic-retinopathy-screening` | W&B project name |
+| `--no-wandb` | `False` | Disable W&B online tracking |
+| `--save-dir` | `models` | Directory for model checkpoints |
+| `--results-dir` | `results` | Directory for benchmark metric CSV tables |
 
 ---
 
@@ -416,6 +457,8 @@ The final repository is expected to evolve toward:
 marconi-diabetic-retinopathy/
 │
 ├── README.md
+├── requirements.txt
+├── train.py                  # Single-command training script (HF & W&B)
 │
 ├── data/
 │   └── README.md
@@ -427,6 +470,7 @@ marconi-diabetic-retinopathy/
 │   └── 04_final_model.ipynb
 │
 ├── src/
+│   ├── __init__.py
 │   ├── data.py
 │   ├── preprocessing.py
 │   ├── models.py
@@ -444,8 +488,6 @@ marconi-diabetic-retinopathy/
 ├── deployment/
 │   ├── api/
 │   └── android/
-│
-├── requirements.txt
 │
 └── presentation/
     └── README.md
