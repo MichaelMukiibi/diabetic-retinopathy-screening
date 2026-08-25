@@ -7,7 +7,7 @@ Calculates clinical metrics:
 - Inference latency and deployment feasibility metrics
 """
 
-from typing import Dict, Any, List, Tuple, Optional/
+from typing import Dict, Any, List, Tuple, Optional
 import time
 import torch
 import torch.nn as nn
