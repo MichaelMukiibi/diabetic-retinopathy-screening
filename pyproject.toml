@@ -1,28 +1,39 @@
 [project]
 name = "fastdrs"
 version = "0.1.0"
-description = "Diabetic retinopathy screening and model deployment toolkit"
+description = "Diabetic retinopathy screening toolkit"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
+
 authors = [
     { name = "Michael Mukiibi" }
 ]
 
 dependencies = [
-    "torch",
-    "torchvision",
     "numpy",
     "pillow",
-    "opencv-python",
-    "scikit-learn",
+]
+
+[project.optional-dependencies]
+
+training = [
+    "torch",
+    "torchvision",
     "datasets",
+    "scikit-learn",
+    "opencv-python",
+]
+
+export = [
+    #LiteRT conversion stack
 ]
 
 [dependency-groups]
+
 dev = [
-    "pytest>=8.0",
-    "ruff>=0.9",
+    "pytest>=8",
+    "ruff",
 ]
 
 [build-system]
