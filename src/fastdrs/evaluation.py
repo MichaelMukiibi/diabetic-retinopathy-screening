@@ -14,7 +14,7 @@ import torch.nn as nn
 import numpy as np
 from sklearn.metrics import accuracy_score, precision_recall_fscore_support, confusion_matrix
 
-from src.models import get_model_info
+from fastdrs.models import get_model_info
 
 
 def compute_specificity(cm: np.ndarray) -> np.ndarray:

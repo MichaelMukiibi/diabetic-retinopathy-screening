@@ -17,9 +17,9 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.optim.lr_scheduler import CosineAnnealingLR, ReduceLROnPlateau
 
-from src.data import create_dataloaders
-from src.models import build_model, get_model_info
-from src.evaluate import evaluate_model
+from fastdrs.data import create_dataloaders
+from fastdrs.models import build_model, get_model_info
+from fastdrs.evaluation import evaluate_model
 
 
 def train_epoch(

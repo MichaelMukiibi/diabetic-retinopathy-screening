@@ -13,7 +13,7 @@ from datasets import load_dataset
 from PIL import Image
 import numpy as np
 
-from src.preprocessing import get_transforms
+from fastdrs.preprocessing import get_transforms
 
 
 class EyepacsDataset(Dataset):

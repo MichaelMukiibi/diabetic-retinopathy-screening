@@ -32,15 +32,15 @@ from torch.optim.lr_scheduler import CosineAnnealingLR, ReduceLROnPlateau
 
 # Import modular project components
 try:
-    from src.data import create_dataloaders
-    from src.models import build_model, get_model_info
-    from src.evaluate import evaluate_model
+    from src.fastdrs.data import create_dataloaders
+    from src.fastdrs.models import build_model, get_model_info
+    from src.fastdrs.evaluation import evaluate_model
 except ImportError:
     # Ensure current directory is in sys.path
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    from src.data import create_dataloaders
-    from src.models import build_model, get_model_info
-    from src.evaluate import evaluate_model
+    from src.fastdrs.data import create_dataloaders
+    from src.fastdrs.models import build_model, get_model_info
+    from src.fastdrs.evaluation import evaluate_model
 
 
 def set_seed(seed: int = 42) -> None:
@@ -138,6 +138,7 @@ def init_wandb(args: argparse.Namespace) -> Optional[Any]:
             entity=args.wandb_entity,
             name=f"{args.arch}_{args.dataset.split('/')[-1]}_{int(time.time())}",
             config=vars(args),
+            anonymous="allow",
             reinit=True
         )
         print(f"[W&B] Initialized run: {wandb.run.name} ({wandb.run.url})")
