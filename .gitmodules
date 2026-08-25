@@ -1,0 +1,3 @@
+[submodule "deployment/android"]
+	path = deployment/android
+	url = https://github.com/MichaelMukiibi/fastdrs-mob-app.git

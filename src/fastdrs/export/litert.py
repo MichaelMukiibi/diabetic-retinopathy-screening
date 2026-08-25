@@ -1,0 +1,52 @@
+import torch
+import os
+from typing import Optional
+from fastdrs.models import build_model
+
+def export_litert(
+    checkpoint: str,
+    architecture: str,
+    output: str,
+    img_size: int = 224,
+    num_classes: int = 5,
+    dropout_rate: float = 0.2,
+) -> str:
+    """
+    Exports a trained PyTorch model to LiteRT (.tflite) format.
+    Requires fastdrs[export] dependencies.
+    """
+    try:
+        import litert_torch
+    except ImportError:
+        raise ImportError(
+            "LiteRT export requires additional dependencies. "
+            "Install them with: pip install 'fastdrs[export]'"
+        )
+
+    if not os.path.exists(checkpoint):
+        raise FileNotFoundError(f"Checkpoint not found at {checkpoint}")
+
+    # 1. Reconstruct model architecture
+    model = build_model(
+        architecture=architecture,
+        num_classes=num_classes,
+        pretrained=False,
+        dropout_rate=dropout_rate
+    )
+
+    # 2. Load state dict
+    device = torch.device('cpu')
+    state_dict = torch.load(checkpoint, map_location=device)
+    model.load_state_dict(state_dict)
+    model.eval()
+
+    # 3. Prepare dummy input (Batch, Channel, Height, Width)
+    sample_inputs = (torch.randn(1, 3, img_size, img_size), )
+
+    # 4. Perform conversion using ai-edge-torch
+    edge_model = litert_torch.convert(model, sample_inputs)
+
+    # 5. Export to file
+    edge_model.export(output)
+
+    return os.path.abspath(output)
