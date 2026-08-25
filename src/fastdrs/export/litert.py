@@ -1,5 +1,5 @@
 import torch
-import os
+from pathlib import Path
 from typing import Optional
 from fastdrs.models import build_model
 
@@ -23,7 +23,7 @@ def export_litert(
             "Install them with: pip install 'fastdrs[export]'"
         )
 
-    if not os.path.exists(checkpoint):
+    if not Path(checkpoint).is_file():
         raise FileNotFoundError(f"Checkpoint not found at {checkpoint}")
 
     # 1. Reconstruct model architecture
