@@ -414,6 +414,13 @@ def train_model(
                     ],
                 }
             )
+
+            # Upload best checkpoint to W&B as an artifact
+            _log_model_artifact(
+                run=wandb_run,
+                checkpoint_path=best_checkpoint_path,
+                architecture=architecture,
+            )
     
         return {
             "architecture": architecture,

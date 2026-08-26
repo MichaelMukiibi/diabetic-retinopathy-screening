@@ -1,6 +1,6 @@
 [project]
 name = "fastdrs"
-version = "0.1.4"
+version = "0.1.5"
 description = "Diabetic retinopathy screening toolkit"
 readme = "package/README.md"
 requires-python = ">=3.10"
