@@ -50,12 +50,12 @@ def export_litert(
     output_path = Path(output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
+    edge_model.export(str(output_path))
+
     # Confirm the export was successful
     if not output_path.is_file():
         raise RuntimeError(
             f"LiteRT export completed but no model was created at {output_path}"
         )
-
-    edge_model.export(str(output_path))
 
     return str(output_path)
