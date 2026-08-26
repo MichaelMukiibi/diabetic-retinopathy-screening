@@ -125,6 +125,7 @@ def _initialize_wandb(
     wandb.login(key=api_key)
 
     run = wandb.init(
+        project="fastdrs",
         config=config,
     )
 
