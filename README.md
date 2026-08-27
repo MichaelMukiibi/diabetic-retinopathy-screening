@@ -159,6 +159,9 @@ Because the dataset is imbalanced, **accuracy will not be treated as the sole me
 
 ## 6. Evaluation Strategy
 
+### Results
+[W&B Training Logs](https://wandb.ai/growsafe/fastdrs)
+
 The project evaluates models using multiple metrics.
 
 ### Accuracy
@@ -221,7 +224,9 @@ The benchmark will investigate:
 
 Experiments will be tracked using **Weights & Biases (W&B)**.
 
-Potentially tracked parameters include:
+[W&B Training Workspace](https://wandb.ai/growsafe/fastdrs)
+
+Tracked parameters include:
 
 * Model architecture
 * Learning rate
