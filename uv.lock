@@ -633,7 +633,7 @@ wheels = [
 
 [[package]]
 name = "fastdrs"
-version = "0.1.5"
+version = "0.1.6"
 source = { editable = "." }
 dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -645,6 +645,12 @@ dependencies = [
 [package.optional-dependencies]
 export = [
     { name = "litert-torch" },
+]
+inference = [
+    { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
+    { name = "numpy", version = "2.4.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version == '3.11.*'" },
+    { name = "numpy", version = "2.5.2", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "pillow" },
 ]
 training = [
     { name = "datasets" },
@@ -667,14 +673,16 @@ requires-dist = [
     { name = "datasets", marker = "extra == 'training'" },
     { name = "litert-torch", marker = "extra == 'export'" },
     { name = "numpy" },
+    { name = "numpy", marker = "extra == 'inference'" },
     { name = "opencv-python", marker = "extra == 'training'" },
     { name = "pillow" },
+    { name = "pillow", marker = "extra == 'inference'" },
     { name = "scikit-learn", marker = "extra == 'training'" },
     { name = "torch", marker = "extra == 'training'" },
     { name = "torchvision", marker = "extra == 'training'" },
     { name = "wandb", marker = "extra == 'training'" },
 ]
-provides-extras = ["training", "export"]
+provides-extras = ["training", "inference", "export"]
 
 [package.metadata.requires-dev]
 dev = [
