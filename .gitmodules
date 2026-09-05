@@ -1,3 +1,6 @@
 [submodule "deployment/android"]
 	path = deployment/android
 	url = https://github.com/MichaelMukiibi/fastdrs-mob-app.git
+[submodule "deployment/github-releases"]
+	path = deployment/github-releases
+	url = https://github.com/MichaelMukiibi/fastdrs-models.git
