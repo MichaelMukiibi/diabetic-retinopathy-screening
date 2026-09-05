@@ -209,3 +209,37 @@ class PyTorchPredictor(BasePredictor):
             )
 
         return predictions
+
+    @classmethod
+    def from_pretrained(
+        cls,
+        model_name: str,
+        device=None,
+        version: str = "v0.1.0",
+        **kwargs,
+    ):
+        from ..weights import (
+            download_model,
+            get_model_artifact,
+        )
+
+        checkpoint = download_model(
+            model_name=model_name,
+            backend="pytorch",
+            version=version,
+        )
+
+        artifact = get_model_artifact(
+            model_name=model_name,
+            backend="pytorch",
+            version=version,
+        )
+
+        return cls.from_checkpoint(
+            checkpoint_path=checkpoint,
+            architecture=artifact.architecture,
+            num_classes=artifact.num_classes,
+            device=device,
+            img_size=artifact.img_size,
+            **kwargs,
+        )

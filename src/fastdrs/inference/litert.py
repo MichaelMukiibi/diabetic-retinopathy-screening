@@ -148,3 +148,33 @@ class LiteRTPredictor(BasePredictor):
 
     def predict_batch(self, images: list[Any]) -> list[Prediction]:
         return [self.predict(image) for image in images]
+
+    @classmethod
+    def from_pretrained(
+        cls,
+        model_name: str,
+        version: str = "v0.1.0",
+        **kwargs,
+    ):
+        from ..weights import (
+            download_model,
+            get_model_artifact,
+        )
+
+        model_path = download_model(
+            model_name=model_name,
+            backend="litert",
+            version=version,
+        )
+
+        artifact = get_model_artifact(
+            model_name=model_name,
+            backend="litert",
+            version=version,
+        )
+
+        return cls(
+            model_path=model_path,
+            img_size=artifact.img_size,
+            **kwargs,
+        )
