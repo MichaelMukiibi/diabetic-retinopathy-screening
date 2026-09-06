@@ -89,7 +89,8 @@ class EarlyStopping:
 
         if self._is_improvement(value): 
             self.best_value = float(value) 
-            self.best_epoch = epoch self.bad_epochs = 0 
+            self.best_epoch = epoch
+            self.bad_epochs = 0 
 
             if self.restore_best_weights: 
                 self.best_state_dict = copy.deepcopy( 
@@ -410,7 +411,7 @@ def train_model(
 
         model.to(device_obj)
         
-            model_info = get_model_info(model)
+        model_info = get_model_info(model)
 
         print(
             f"Model parameters: "
