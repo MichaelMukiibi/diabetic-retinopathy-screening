@@ -111,16 +111,16 @@ class EarlyStopping:
 
         return False
 
-        def restore(self, model: nn.Module) -> None: 
-            """
-            Restore the best model weights.
-            
-            """ 
+    def restore(self, model: nn.Module) -> None: 
+        """
+        Restore the best model weights.
+        
+        """ 
 
-            if self.best_state_dict is None: 
-                return 
+        if self.best_state_dict is None: 
+            return 
 
-            model.load_state_dict(self.best_state_dict)
+        model.load_state_dict(self.best_state_dict)
 
 
 def train_epoch(
