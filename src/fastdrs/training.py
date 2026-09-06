@@ -71,14 +71,14 @@ class EarlyStopping:
         if self.min_delta < 0:
             raise ValueError("min_delta must be non-negative")
 
-        def _is_improvement(self, value: float) -> bool:
-            if self.best_value is None:
-                return True
+    def _is_improvement(self, value: float) -> bool:
+        if self.best_value is None:
+            return True
 
-            if self.mode == "max":
-                return value > self.best_value + self.min_delta
-            else:  # mode == "min"
-                return value < self.best_value - self.min_delta
+        if self.mode == "max":
+            return value > self.best_value + self.min_delta
+        else:  # mode == "min"
+            return value < self.best_value - self.min_delta
             
     def step( self, value: float, epoch: int, model: nn.Module, ) -> bool: 
         """ 
@@ -89,7 +89,8 @@ class EarlyStopping:
 
         if self._is_improvement(value): 
             self.best_value = float(value) 
-            self.best_epoch = epoch self.bad_epochs = 0 
+            self.best_epoch = epoch
+            self.bad_epochs = 0 
 
             if self.restore_best_weights: 
                 self.best_state_dict = copy.deepcopy( 
@@ -110,16 +111,16 @@ class EarlyStopping:
 
         return False
 
-        def restore(self, model: nn.Module) -> None: 
-            """
-            Restore the best model weights.
-            
-            """ 
+    def restore(self, model: nn.Module) -> None: 
+        """
+        Restore the best model weights.
+        
+        """ 
 
-            if self.best_state_dict is None: 
-                return 
+        if self.best_state_dict is None: 
+            return 
 
-            model.load_state_dict(self.best_state_dict)
+        model.load_state_dict(self.best_state_dict)
 
 
 def train_epoch(
@@ -371,6 +372,8 @@ def train_model(
     
     print(f"--- Training {architecture} on {device} ---")
 
+    wandb_run = None
+
     # W&B Initialisation
     if use_wandb:
         wandb_config = {
@@ -410,7 +413,7 @@ def train_model(
 
         model.to(device_obj)
         
-            model_info = get_model_info(model)
+        model_info = get_model_info(model)
 
         print(
             f"Model parameters: "
