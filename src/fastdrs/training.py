@@ -71,14 +71,14 @@ class EarlyStopping:
         if self.min_delta < 0:
             raise ValueError("min_delta must be non-negative")
 
-        def _is_improvement(self, value: float) -> bool:
-            if self.best_value is None:
-                return True
+    def _is_improvement(self, value: float) -> bool:
+        if self.best_value is None:
+            return True
 
-            if self.mode == "max":
-                return value > self.best_value + self.min_delta
-            else:  # mode == "min"
-                return value < self.best_value - self.min_delta
+        if self.mode == "max":
+            return value > self.best_value + self.min_delta
+        else:  # mode == "min"
+            return value < self.best_value - self.min_delta
             
     def step( self, value: float, epoch: int, model: nn.Module, ) -> bool: 
         """ 
@@ -372,6 +372,8 @@ def train_model(
     
     print(f"--- Training {architecture} on {device} ---")
 
+    wandb_run = None
+
     # W&B Initialisation
     if use_wandb:
         wandb_config = {
@@ -392,7 +394,6 @@ def train_model(
             "early_stopping_min_delta": min_delta,
         }
 
-        wandb_run = None
         wandb_run = _initialize_wandb(wandb_config)
 
     try:
