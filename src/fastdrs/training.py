@@ -392,6 +392,7 @@ def train_model(
             "early_stopping_min_delta": min_delta,
         }
 
+        wandb_run = None
         wandb_run = _initialize_wandb(wandb_config)
 
     try:
