@@ -2,62 +2,113 @@
 
 **Fast diabetic retinopathy screening and model development toolkit for PyTorch.**
 
-`fastdrs` provides reusable components for building, training, evaluating, and eventually deploying diabetic retinopathy classification models. It is designed to separate the reusable ML functionality from the research and experimentation code in the `diabetic-retinopathy-screening` project.
+`fastdrs` is a reusable machine learning toolkit for developing diabetic retinopathy classification systems. It provides components for model construction, fundus-image preprocessing, dataset loading, training, evaluation, checkpoint management, and deployment-oriented inference.
 
-> **Status:** Early development (`0.1.0`)
+The package is designed to separate reusable ML functionality from the experimentation and research code in the `diabetic-retinopathy-screening` project.
+
+> **Status:** Active development (`0.1.x`)
 
 ---
 
 ## Features
 
-* 🧠 **Multiple vision architectures**
+### 🧠 Vision architectures
 
-  * ResNet18
-  * ResNet50
-  * DenseNet121
-  * ConvNeXt-Tiny
-  * Swin Transformer-Tiny
-  * MobileNetV2
+`fastdrs` provides a common model factory for several image-classification architectures:
 
-* 🖼️ **Fundus image preprocessing**
+* ResNet18
+* ResNet50
+* DenseNet121
+* ConvNeXt-Tiny
+* Swin Transformer-Tiny
+* MobileNetV2
 
-  * Image resizing
-  * ImageNet normalization
-  * Data augmentation
-  * Fundus boundary cropping
-  * Ben Graham preprocessing
+All architectures expose a consistent interface through `build_model()`.
 
-* 📊 **Dataset handling**
+### 🖼️ Fundus image preprocessing
 
-  * Hugging Face datasets
-  * EYEPACS-compatible datasets
-  * Reproducible train/validation/test splitting
-  * PyTorch `Dataset` and `DataLoader` integration
+* Image resizing
+* ImageNet normalization
+* Training-time augmentation
+* Fundus boundary cropping
+* Ben Graham preprocessing
 
-* 🚂 **Model training**
+Preprocessing can be configured consistently for training and evaluation.
 
-  * PyTorch training loops
-  * AdamW optimization
-  * Cosine annealing learning-rate scheduling
-  * Best-checkpoint saving
-  * Optional Weights & Biases integration
+### 📊 Dataset handling
 
-* 📈 **Evaluation**
+* Hugging Face datasets
+* APTOS-compatible datasets
+* EYEPACS-compatible dataset workflows
+* Reproducible train/validation/test splitting
+* PyTorch `Dataset` and `DataLoader` integration
 
-  * Accuracy
-  * Precision
-  * Sensitivity/Recall
-  * Specificity
-  * Macro F1
-  * Weighted F1
-  * Confusion matrices
-  * Per-class metrics
-  * Inference latency
-  * Model parameter and size estimates
+### 🚂 Model training
 
-* 📱 **Deployment**
+The training pipeline provides:
 
-  * LiteRT export support is being developed for Android/on-device inference.
+* PyTorch training loops
+* Cross-entropy loss
+* AdamW optimization
+* Cosine annealing learning-rate scheduling
+* Validation monitoring
+* Macro-F1-based early stopping
+* Configurable patience and minimum improvement
+* Best-model checkpointing
+* Optional Weights & Biases integration
+* Final test-set evaluation
+
+### 💾 Metadata-aware checkpoints
+
+Training checkpoints are self-describing rather than containing only a raw PyTorch `state_dict`.
+
+A checkpoint can contain information such as:
+
+* Model architecture
+* Number of classes
+* Input image size
+* Class names
+* Training epoch
+* Monitored validation metric
+* Best metric value
+* Dataset information
+* Checkpoint format version
+* Model weights
+
+This allows downstream inference code to determine how a model was trained without requiring the architecture to be manually specified.
+
+Legacy state-dict-only checkpoints can also be loaded for backwards compatibility.
+
+### 📈 Evaluation
+
+The evaluation pipeline reports:
+
+* Accuracy
+* Macro precision
+* Macro sensitivity/recall
+* Macro specificity
+* Macro F1
+* Weighted F1
+* Confusion matrix
+* Per-class metrics
+* Inference latency
+* Parameter count
+* Estimated model size
+
+This makes the evaluation output suitable for both research benchmarking and deployment-oriented model comparison.
+
+### 📱 Deployment
+
+The project is being developed with resource-constrained and on-device inference in mind.
+
+Deployment components include:
+
+* PyTorch inference
+* LiteRT inference
+* LiteRT export for Android deployment
+* Offline/on-device inference workflows
+
+LiteRT functionality is optional so users who only need the core ML toolkit do not need to install the additional runtime or conversion dependencies.
 
 ---
 
@@ -75,28 +126,70 @@ Or with `uv`:
 uv add fastdrs
 ```
 
+The basic installation contains the lightweight core functionality.
+
+---
+
 ### Training dependencies
 
-Training functionality requires the training dependencies:
+Install the training stack with:
 
 ```bash
 pip install "fastdrs[training]"
 ```
 
-or:
+Or:
 
 ```bash
 uv add "fastdrs[training]"
 ```
 
+This installs the dependencies required for:
+
+* PyTorch training
+* TorchVision models
+* Dataset loading
+* Computer-vision preprocessing
+* Evaluation
+* Weights & Biases integration
+
+---
+
+### PyTorch inference
+
+If PyTorch inference is being used independently of the training pipeline:
+
+```bash
+pip install "fastdrs[inference]"
+```
+
+---
+
+### LiteRT inference
+
+LiteRT inference dependencies can be installed separately:
+
+```bash
+pip install "fastdrs[litert]"
+```
+
+This keeps the core package lightweight while allowing deployment environments to install only the runtime they require.
+
+---
+
 ### Development installation
 
-Clone the repository and install the development environment with `uv`:
+Clone the research repository:
 
 ```bash
 git clone https://github.com/MichaelMukiibi/diabetic-retinopathy-screening.git
-cd diabetic-retinopathy-screening
 
+cd diabetic-retinopathy-screening
+```
+
+Install the development environment:
+
+```bash
 uv sync
 ```
 
@@ -126,19 +219,15 @@ Example output:
 {
     'total_parameters': ...,
     'trainable_parameters': ...,
-    'model_size_mb': ...
+    'estimated_size_mb': ...
 }
 ```
 
 ---
 
-## Supported architectures
+## Supported Architectures
 
 The model factory currently supports:
-
-```python
-from fastdrs.models import build_model
-```
 
 | Architecture          | Identifier      |
 | --------------------- | --------------- |
@@ -149,15 +238,19 @@ from fastdrs.models import build_model
 | Swin Transformer-Tiny | `swin_t`        |
 | MobileNetV2           | `mobilenet_v2`  |
 
-For example:
+Example:
 
 ```python
+from fastdrs.models import build_model
+
 model = build_model(
     architecture="resnet50",
     num_classes=5,
     pretrained=True,
 )
 ```
+
+The same interface can therefore be used to benchmark different architectures without changing the surrounding training pipeline.
 
 ---
 
@@ -205,7 +298,7 @@ train_transforms = get_transforms(
 )
 ```
 
-Individual preprocessing can be used directly:
+The preprocessing function can also be used directly:
 
 ```python
 from fastdrs.preprocessing import ben_graham_preprocessing
@@ -220,7 +313,7 @@ processed_image = ben_graham_preprocessing(
 
 ## Dataset Loading
 
-`fastdrs` supports Hugging Face datasets through its dataset utilities.
+`fastdrs` provides utilities for loading and preparing retinal-image datasets.
 
 ```python
 from fastdrs.data import create_dataloaders
@@ -232,18 +325,20 @@ train_loader, val_loader, test_loader, dataset_info = create_dataloaders(
 )
 ```
 
-The loader creation utility handles:
+The dataset utilities handle:
 
 * Dataset loading
 * Train/validation/test splitting
 * Image transformations
 * PyTorch `DataLoader` construction
 
+Dataset splitting is configurable and can be made reproducible through the provided seed configuration.
+
 ---
 
 ## Training
 
-Training functionality is available through:
+Training is available through `train_model()`:
 
 ```python
 from fastdrs.training import train_model
@@ -264,10 +359,73 @@ The training pipeline provides:
 * Cross-entropy loss
 * AdamW optimization
 * Cosine annealing
-* Best validation-loss checkpointing
+* Validation monitoring
+* Early stopping
+* Best-model checkpointing
 * Final test-set evaluation
 
-A trained checkpoint is saved to the configured model directory.
+### Early stopping
+
+By default, training can monitor validation macro F1:
+
+```python
+results = train_model(
+    architecture="convnext_tiny",
+    dataset_name="sngsfydy/aptos",
+    epochs=30,
+    batch_size=32,
+    monitor="val_f1_macro",
+    patience=7,
+    min_delta=0.001,
+)
+```
+
+Other validation metrics can be used as the stopping criterion where supported.
+
+The best checkpoint is restored before final evaluation.
+
+---
+
+## Checkpoints
+
+A trained model is saved as a metadata-aware checkpoint in the configured model directory.
+
+A checkpoint contains the model weights together with information needed to identify the model configuration.
+
+Conceptually:
+
+```text
+checkpoint.pth
+│
+├── model_state_dict
+├── architecture
+├── num_classes
+├── img_size
+├── class_names
+├── dataset_name
+├── epoch
+├── monitor
+├── best_metric
+└── checkpoint_version
+```
+
+This is important for deployment because inference code does not have to rely on undocumented assumptions about which architecture or class mapping was used to produce a model.
+
+### Loading a checkpoint
+
+```python
+from fastdrs.training import load_checkpoint
+
+checkpoint = load_checkpoint(
+    "models/resnet18_best.pth",
+)
+
+print(checkpoint["architecture"])
+print(checkpoint["class_names"])
+print(checkpoint["img_size"])
+```
+
+The checkpoint loader also supports legacy checkpoints containing only a PyTorch `state_dict`.
 
 ---
 
@@ -301,25 +459,65 @@ confusion_matrix
 per_class
 ```
 
-This makes the evaluation output suitable for both ML benchmarking and deployment-oriented model comparison.
+Example:
+
+```python
+print(results["f1_macro"])
+print(results["sensitivity_macro"])
+print(results["specificity_macro"])
+```
+
+The evaluation output is designed to make candidate architectures comparable across both predictive performance and deployment constraints.
+
+---
+
+## Weights & Biases
+
+Weights & Biases integration is optional.
+
+Enable it during training:
+
+```python
+results = train_model(
+    architecture="resnet50",
+    dataset_name="sngsfydy/aptos",
+    epochs=10,
+    use_wandb=True,
+)
+```
+
+Training metrics and final evaluation metrics can then be tracked alongside the experiment configuration.
+
+If W&B is disabled, the training pipeline runs without requiring a W&B run.
 
 ---
 
 ## Project Architecture
 
-`fastdrs` is developed as part of the diabetic retinopathy screening research project.
+`fastdrs` is developed alongside the diabetic retinopathy screening research project.
 
 ```text
 diabetic-retinopathy-screening/
 │
 ├── src/
 │   └── fastdrs/
+│       ├── __init__.py
 │       ├── data.py
 │       ├── preprocessing.py
 │       ├── models.py
 │       ├── training.py
 │       ├── evaluation.py
-│       └── deployment/
+│       │
+│       ├── inference/
+│       │   ├── __init__.py
+│       │   ├── base.py
+│       │   ├── prediction.py
+│       │   ├── pytorch.py
+│       │   └── litert.py
+│       │
+│       └── export/
+│           ├── __init__.py
+│           └── litert.py
 │
 ├── notebooks/
 ├── data/
@@ -330,7 +528,7 @@ diabetic-retinopathy-screening/
     └── android/
 ```
 
-The `fastdrs` package contains the reusable ML functionality, while notebooks and project-level scripts are used for experimentation and research.
+The package contains reusable ML functionality, while notebooks and project-level scripts are used for experimentation, research, benchmarking, and application development.
 
 ---
 
@@ -338,34 +536,77 @@ The `fastdrs` package contains the reusable ML functionality, while notebooks an
 
 On-device deployment is a major goal of the project.
 
-The intended deployment pipeline is:
+The intended pipeline is:
 
 ```text
-PyTorch Model
-     │
-     ▼
-Trained Checkpoint
-     │
-     ▼
-Model Export
-     │
-     ▼
-LiteRT
-     │
-     ▼
-.tflite Model
-     │
-     ▼
-Android Application
+                 Training
+                    │
+                    ▼
+              PyTorch Model
+                    │
+                    ▼
+          Metadata-aware Checkpoint
+                    │
+                    ▼
+              Model Export
+                    │
+                    ▼
+                 LiteRT
+                    │
+                    ▼
+               .tflite Model
+                    │
+                    ▼
+            Android Application
 ```
 
-LiteRT export functionality is being developed as an optional component so that users who only need the core ML functionality do not have to install the additional conversion stack.
+The package separates model development, inference, and export so that deployment dependencies do not unnecessarily become dependencies of the core package.
 
-The planned installation interface is:
+### LiteRT export
+
+LiteRT export functionality is available as an optional component:
 
 ```bash
 pip install "fastdrs[export]"
 ```
+
+The resulting `.tflite` model can then be integrated into an Android application for on-device inference.
+
+### LiteRT inference
+
+LiteRT runtime support is kept separate from the export stack:
+
+```bash
+pip install "fastdrs[litert]"
+```
+
+This distinction allows a deployment environment to install the runtime without installing the model-conversion toolchain.
+
+---
+
+## Android Deployment
+
+The research project includes an Android application intended to consume exported models.
+
+The deployment architecture is designed around:
+
+```text
+Fundus Image
+     │
+     ▼
+Image Preprocessing
+     │
+     ▼
+LiteRT Model
+     │
+     ▼
+5-Class Prediction
+     │
+     ▼
+Screening Result
+```
+
+The goal is to support inference locally on the device rather than requiring a continuous network connection.
 
 ---
 
@@ -383,6 +624,18 @@ Install training dependencies:
 
 ```bash
 uv sync --extra training
+```
+
+Install inference dependencies:
+
+```bash
+uv sync --extra inference
+```
+
+Install LiteRT dependencies:
+
+```bash
+uv sync --extra litert
 ```
 
 Install all optional dependencies:
@@ -413,15 +666,15 @@ uv build
 
 ## PyPI
 
-The package is distributed through PyPI:
+`fastdrs` is distributed through PyPI:
 
 ```bash
 pip install fastdrs
 ```
 
-The package can therefore be tested independently of the source repository, including in environments such as Google Colab.
+This allows the reusable ML components to be installed independently of the research repository.
 
-For example:
+For example, in Google Colab:
 
 ```python
 !pip install fastdrs
@@ -440,22 +693,50 @@ model = build_model(
 print(model)
 ```
 
+This separation makes it possible to use the package in notebooks, experiments, training environments, and downstream applications without cloning the complete research repository.
+
 ---
 
 ## Research Project
 
 `fastdrs` is being developed alongside a diabetic retinopathy screening research project using retinal fundus images.
 
-The broader project investigates:
+The broader research investigates:
 
 * Diabetic retinopathy classification
 * Transfer learning
 * Vision architecture benchmarking
-* Resource-constrained inference
 * Model efficiency
+* Resource-constrained inference
 * On-device screening
+* Deployment-oriented evaluation
+
+Candidate architectures are evaluated not only on classification performance but also on practical deployment characteristics such as parameter count, model size, and inference latency.
 
 The package is intended to make the resulting ML pipeline reusable beyond the original research repository.
+
+---
+
+## Roadmap
+
+Planned and ongoing development includes:
+
+* [x] Multi-architecture model factory
+* [x] Fundus preprocessing utilities
+* [x] Dataset and DataLoader utilities
+* [x] Training pipeline
+* [x] Validation-based checkpointing
+* [x] Early stopping
+* [x] Metadata-aware checkpoints
+* [x] Model evaluation metrics
+* [x] PyPI distribution
+* [ ] Expanded pretrained model distribution
+* [ ] Checkpoint registry / remote model loading
+* [ ] Stable PyTorch inference API
+* [ ] LiteRT export pipeline
+* [ ] LiteRT inference API
+* [ ] Improved model/version metadata
+* [ ] Android deployment tooling
 
 ---
 
