@@ -1,20 +1,20 @@
 # AI-Assisted Diabetic Retinopathy Screening & Triage
 
-> **Marconi Research & Innovations Lab — Internship Capstone Project**
+**Marconi Research & Innovations Lab — Internship Capstone Project**
 
 An economically motivated computer-vision system for **AI-assisted diabetic retinopathy screening and clinical triage**, designed with resource-constrained healthcare environments in mind.
 
-The project investigates whether modern deep-learning vision architectures can classify diabetic retinopathy severity from retinal fundus photographs while balancing **clinical sensitivity, predictive performance, model size, and inference latency** for practical deployment.
+The project investigates whether modern deep-learning vision architectures can classify diabetic retinopathy severity from retinal fundus photographs while balancing **clinical sensitivity, predictive performance, model size, inference latency, and deployment feasibility**.
 
 > **Important:** This project is a research and engineering prototype. It is **not a medical device and does not provide an autonomous clinical diagnosis**. Predictions are intended to demonstrate AI-assisted screening and referral prioritization.
 
 ---
 
-## 1. Problem
+## Overview
 
 Diabetic retinopathy (DR) is a major complication of diabetes and an important cause of preventable vision loss. Early identification can enable timely clinical assessment and treatment.
 
-In resource-constrained healthcare environments, however, screening can be limited by:
+In resource-constrained healthcare environments, screening can be limited by:
 
 * Shortage of ophthalmologists and trained specialists
 * Geographic barriers to specialist care
@@ -22,67 +22,17 @@ In resource-constrained healthcare environments, however, screening can be limit
 * Increasing numbers of patients requiring screening
 * Limited access to regular retinal imaging assessment
 
-This creates an opportunity for **AI-assisted screening and triage**.
+This project explores whether an AI-assisted system can help healthcare workers identify retinal images that may require **higher-priority specialist review**.
 
-Rather than replacing clinicians, an AI system can potentially help healthcare workers identify images that require **higher-priority specialist review**, allowing limited clinical resources to be allocated more efficiently.
-
----
-
-## 2. Proposed Solution
-
-This project develops a computer-vision pipeline that analyzes retinal fundus photographs and estimates the severity of diabetic retinopathy.
-
-The system investigates multiple modern vision architectures and evaluates them not only by predictive performance, but also by their suitability for deployment.
-
-### Core workflow
-
-```text
-Retinal Fundus Image
-        │
-        ▼
-      EDA
-        │
-        ▼
-Preprocessing
-        │
-        ▼
-Model Fine-Tuning
-        │
-        ├── ResNet
-        ├── DenseNet
-        ├── ConvNeXt
-        └── Swin Transformer
-        │
-        ▼
-Model Evaluation
-        │
-        ├── Accuracy
-        ├── Precision
-        ├── Recall / Sensitivity
-        ├── Specificity
-        └── F1 Score
-        │
-        ▼
-Deployment Analysis
-        │
-        ├── Model Size
-        ├── Parameter Count
-        └── Inference Latency
-        │
-        ▼
-Final Model
-        │
-        ▼
-Android Application / API
-```
+The objective is not to replace clinicians. Instead, the system is designed around a **screening and triage workflow** in which machine learning can potentially help allocate limited clinical resources more efficiently.
 
 ---
 
-## 3. Capstone Research Question
+# Research Question
 
 > **Can modern computer-vision architectures provide sufficiently sensitive diabetic-retinopathy screening while remaining computationally efficient enough for deployment in resource-constrained healthcare environments?**
 
-The project therefore treats model selection as a multi-objective engineering problem:
+This makes model selection a multi-objective engineering problem:
 
 ```text
 Clinical Performance
@@ -94,37 +44,88 @@ Deployment Feasibility
 Practical Model
 ```
 
+The project therefore evaluates models beyond raw accuracy.
+
 ---
 
-## 4. Objectives
+# System
 
-### Primary objective
+The current system is organized as an end-to-end ML pipeline:
+
+```text
+                    Retinal Fundus Image
+                            │
+                            ▼
+                           EDA
+                            │
+                            ▼
+                    Preprocessing
+                            │
+                            ▼
+                 Model Fine-Tuning
+                            │
+             ┌──────────────┼──────────────┐
+             ▼              ▼              ▼
+          ResNet         DenseNet       ConvNeXt
+                                           │
+                                           ▼
+                                      Swin Transformer
+                            │
+                            ▼
+                     Model Evaluation
+                            │
+             ┌──────────────┼──────────────┐
+             ▼              ▼              ▼
+        Classification   Efficiency    Deployment
+          Metrics         Metrics        Analysis
+                            │
+                            ▼
+                  Metadata-Aware Checkpoint
+                            │
+                            ▼
+                   PyTorch / LiteRT
+                            │
+                            ▼
+                   Android / API
+```
+
+---
+
+# Objectives
+
+## Primary objective
 
 Develop and evaluate a deployable AI-assisted diabetic-retinopathy screening prototype using retinal fundus photographs.
 
-### Specific objectives
+## Specific objectives
 
 1. Perform exploratory data analysis on the APTOS 2019 dataset.
 2. Develop a standardized image preprocessing and training pipeline.
 3. Fine-tune modern computer-vision architectures for diabetic-retinopathy classification.
-4. Compare ResNet, DenseNet, ConvNeXt, and Swin Transformer architectures.
+4. Compare multiple CNN and vision-transformer architectures.
 5. Evaluate models using clinically relevant classification metrics.
 6. Investigate the relationship between sensitivity, model size, and inference latency.
-7. Select a final model based on predictive performance and deployment feasibility.
-8. Integrate the trained model into an **Android application or inference API**.
-9. Demonstrate an end-to-end screening workflow.
+7. Select a model based on predictive performance and deployment feasibility.
+8. Package reusable ML functionality through `fastdrs`.
+9. Export and run selected models in deployment-oriented environments.
+10. Integrate the trained model into an Android application or inference API.
+11. Demonstrate an end-to-end screening workflow.
 
 ---
 
-## 5. Dataset
+# Dataset
 
-### APTOS 2019 Blindness Detection
+## APTOS 2019 Blindness Detection
 
 The primary dataset is the **APTOS 2019 Blindness Detection** dataset.
 
 It contains approximately **3,662 labeled retinal fundus photographs** across five diabetic-retinopathy severity grades.
 
-### Classes
+Dataset source:
+
+https://www.kaggle.com/competitions/aptos2019-blindness-detection
+
+## Classes
 
 | Label | Severity                           |
 | ----: | ---------------------------------- |
@@ -134,75 +135,62 @@ It contains approximately **3,662 labeled retinal fundus photographs** across fi
 |     3 | Severe                             |
 |     4 | Proliferative diabetic retinopathy |
 
-The dataset was originally released through the APTOS 2019 Blindness Detection Kaggle competition.
+Because the dataset is imbalanced, **accuracy is not treated as the sole measure of model quality**.
 
-Dataset source:
-
-[https://www.kaggle.com/competitions/aptos2019-blindness-detection](https://www.kaggle.com/competitions/aptos2019-blindness-detection)
-
-### Data considerations
-
-The project will investigate:
-
-* Class distribution
-* Image dimensions
-* Image quality
-* Color/channel characteristics
-* Class imbalance
-* Training/validation/test splitting
-* Appropriate augmentation
-* Image normalization
-
-Because the dataset is imbalanced, **accuracy will not be treated as the sole measure of model quality**.
+The project also considers sensitivity, specificity, precision, macro F1, per-class performance, and confusion matrices.
 
 ---
 
-## 6. Evaluation Strategy
+# Evaluation
 
-### Results
-[W&B Training Logs](https://wandb.ai/growsafe/fastdrs)
+The project evaluates models across both **clinical/research metrics** and **deployment metrics**.
 
-The project evaluates models using multiple metrics.
+## Classification metrics
 
-### Accuracy
+* Accuracy
+* Macro precision
+* Macro sensitivity / recall
+* Macro specificity
+* Macro F1
+* Weighted F1
+* Per-class precision
+* Per-class sensitivity
+* Per-class specificity
+* Confusion matrix
 
-Measures the proportion of correctly classified samples.
+## Deployment metrics
 
-### Precision
+* Inference latency
+* Parameter count
+* Estimated model size
+* Deployment compatibility
 
-Measures how many predicted positive cases are actually positive.
+The central comparison is:
 
-### Recall / Sensitivity
-
-Measures the proportion of relevant positive cases detected by the model.
-
-For a screening application, sensitivity is particularly important because missed cases may require further clinical assessment.
-
-### Specificity
-
-Measures the proportion of negative cases correctly identified.
-
-### F1 Score
-
-Balances precision and recall.
-
-### Confusion Matrix
-
-Used to examine errors across the five diabetic-retinopathy severity classes.
+> **Predictive performance vs. computational cost vs. deployment feasibility.**
 
 ---
 
-## 7. Model Benchmarking
+# Model Benchmarking
 
-The project will investigate four major vision architectures.
+The project currently supports the following architectures through the `fastdrs` model factory:
+
+| Architecture          | Identifier      |
+| --------------------- | --------------- |
+| ResNet-18             | `resnet18`      |
+| ResNet-50             | `resnet50`      |
+| DenseNet-121          | `densenet121`   |
+| ConvNeXt-Tiny         | `convnext_tiny` |
+| Swin Transformer-Tiny | `swin_t`        |
+| MobileNetV2           | `mobilenet_v2`  |
 
 ### ResNet
 
-Uses residual/skip connections to facilitate the training of deep convolutional networks.
+Residual/skip connections allow deep convolutional networks to be trained effectively.
 
 ### DenseNet
 
-Uses dense connectivity and feature reuse between layers.
+Dense connectivity promotes feature reuse between layers.
 
 ### ConvNeXt
 
@@ -210,139 +198,328 @@ A modern convolutional architecture incorporating design principles developed al
 
 ### Swin Transformer
 
-Uses hierarchical vision-transformer representations with shifted-window attention.
+A hierarchical vision-transformer architecture using shifted-window attention.
 
-The objective is not simply to identify the model with the highest accuracy.
+### MobileNetV2
 
-The benchmark will investigate:
+A lightweight architecture useful for investigating resource-constrained inference.
 
-> **Predictive performance vs. computational cost vs. deployment feasibility.**
+The goal is not simply to find the model with the highest classification score.
+
+The project asks:
+
+> **Which model provides the best practical trade-off between screening performance and deployment requirements?**
 
 ---
 
-## 8. Experimental Tracking
+# `fastdrs`
 
-Experiments will be tracked using **Weights & Biases (W&B)**.
+The reusable machine-learning components have been separated into a Python package called **`fastdrs`**.
 
-[W&B Training Workspace](https://wandb.ai/growsafe/fastdrs)
+`fastdrs` provides:
 
-Tracked parameters include:
+* Model construction
+* Fundus-image preprocessing
+* Dataset loading
+* PyTorch training
+* Early stopping
+* Metadata-aware checkpoints
+* Model evaluation
+* PyTorch inference
+* LiteRT inference
+* LiteRT export functionality
+
+The package is distributed through PyPI.
+
+```bash
+pip install fastdrs
+```
+
+Repository/package development is kept separate from experiment-specific notebooks and application code.
+
+## Package architecture
+
+```text
+src/fastdrs/
+│
+├── __init__.py
+├── data.py
+├── preprocessing.py
+├── models.py
+├── training.py
+├── evaluation.py
+│
+├── inference/
+│   ├── __init__.py
+│   ├── base.py
+│   ├── prediction.py
+│   ├── pytorch.py
+│   └── litert.py
+│
+└── export/
+    ├── __init__.py
+    └── litert.py
+```
+
+This separation allows the ML pipeline to be reused independently of the research repository.
+
+---
+
+# Training
+
+The training pipeline is implemented in `fastdrs`.
+
+Example:
+
+```python
+from fastdrs.training import train_model
+
+results = train_model(
+    architecture="convnext_tiny",
+    dataset_name="sngsfydy/aptos",
+    epochs=10,
+    batch_size=32,
+    lr=1e-4,
+    img_size=224,
+)
+```
+
+The pipeline provides:
+
+* Training and validation loops
+* Cross-entropy loss
+* AdamW optimization
+* Cosine annealing learning-rate scheduling
+* Validation monitoring
+* Configurable early stopping
+* Best-model restoration
+* Metadata-aware checkpointing
+* Final test-set evaluation
+* Optional W&B tracking
+
+## Early stopping
+
+Training can monitor validation macro F1:
+
+```python
+results = train_model(
+    architecture="convnext_tiny",
+    dataset_name="sngsfydy/aptos",
+    epochs=30,
+    monitor="val_f1_macro",
+    patience=7,
+    min_delta=0.001,
+)
+```
+
+The best model is restored before final evaluation.
+
+---
+
+# Metadata-Aware Checkpoints
+
+A trained model is stored as a self-describing checkpoint rather than as a raw `state_dict` alone.
+
+Conceptually:
+
+```text
+checkpoint.pth
+│
+├── model_state_dict
+├── architecture
+├── num_classes
+├── img_size
+├── class_names
+├── dataset_name
+├── epoch
+├── monitor
+├── best_metric
+└── checkpoint_version
+```
+
+This makes the trained model easier to reproduce and deploy.
+
+Instead of requiring inference code to know beforehand which architecture was used, the checkpoint itself contains the model configuration required to reconstruct it.
+
+The loader also maintains compatibility with legacy state-dict-only checkpoints.
+
+This is particularly important for the longer-term model-distribution architecture, where trained models may be remotely accessible and consumed by downstream inference clients.
+
+---
+
+# Preprocessing
+
+The package provides retinal fundus preprocessing utilities including:
+
+* Image resizing
+* ImageNet normalization
+* Data augmentation
+* Fundus boundary cropping
+* Ben Graham preprocessing
+
+Example:
+
+```python
+from fastdrs.preprocessing import get_transforms
+
+train_transforms = get_transforms(
+    img_size=224,
+    is_train=True,
+)
+
+eval_transforms = get_transforms(
+    img_size=224,
+    is_train=False,
+)
+```
+
+Ben Graham preprocessing can be enabled when required:
+
+```python
+train_transforms = get_transforms(
+    img_size=224,
+    is_train=True,
+    use_ben_graham=True,
+)
+```
+
+---
+
+# Experiment Tracking
+
+Experiments are tracked using **Weights & Biases**.
+
+W&B workspace:
+
+https://wandb.ai/growsafe/fastdrs
+
+Tracked information includes:
 
 * Model architecture
+* Dataset
 * Learning rate
 * Batch size
 * Number of epochs
 * Training loss
 * Validation loss
-* Accuracy
-* Precision
-* Recall
-* Sensitivity
-* Specificity
-* F1 score
-* Training duration
+* Validation accuracy
+* Validation macro F1
+* Classification metrics
+* Inference latency
+* Model size
+* Parameter count
 
-This enables systematic comparison between experiments instead of relying on isolated notebook outputs.
+The purpose is to make architecture comparisons reproducible rather than relying on isolated notebook outputs.
+
+W&B is optional; training can also run locally without online tracking.
 
 ---
 
-## 9. Training Framework & Quickstart
+# Quick Start
 
-The project builds on technologies explored during the Marconi internship:
+## Install
 
-* Python
-* PyTorch
-* Hugging Face Datasets
-* scikit-learn
-* Weights & Biases (W&B)
+For the core package:
 
-### Running the Training Pipeline (`train.py`)
-
-A unified, single-execution training script (`train.py`) is provided for local execution and experiment tracking.
-
-#### 1. Setup Dependencies
 ```bash
-pip install -r requirements.txt
+pip install fastdrs
 ```
 
-#### 2. Single-Command Training Examples
+For training:
 
-* **Default Run (ResNet-50 with W&B logging)**:
-  ```bash
-  python train.py
-  ```
+```bash
+pip install "fastdrs[training]"
+```
 
-* **Architecture Benchmarking (DenseNet-121 with Ben Graham Preprocessing)**:
-  ```bash
-  python train.py --arch densenet121 --epochs 15 --batch-size 16 --ben-graham
-  ```
+For PyTorch inference:
 
-* **Modern Vision Transformers (Swin Transformer / ConvNeXt)**:
-  ```bash
-  python train.py --arch swin_t --epochs 10 --batch-size 16
-  python train.py --arch convnext_tiny --epochs 10 --batch-size 16
-  ```
+```bash
+pip install "fastdrs[inference]"
+```
 
-* **Local Offline Run (without Weights & Biases)**:
-  ```bash
-  python train.py --arch mobilenet_v2 --epochs 5 --no-wandb
-  ```
+For LiteRT inference:
 
-#### 3. Command-Line Options
+```bash
+pip install "fastdrs[litert]"
+```
 
-| Argument | Default | Description |
-| :--- | :--- | :--- |
-| `--arch`, `-a` | `resnet50` | Architecture (`resnet50`, `resnet18`, `densenet121`, `convnext_tiny`, `swin_t`, `mobilenet_v2`) |
-| `--dataset`, `-d` | `sngsfydy/aptos` | Hugging Face dataset identifier |
-| `--epochs`, `-e` | `10` | Number of training epochs |
-| `--batch-size`, `-b` | `16` | Batch size per step |
-| `--lr` | `1e-4` | Learning rate |
-| `--ben-graham` | `False` | Apply Ben Graham circular crop & local color subtraction |
-| `--device` | `auto` | Execution device (`auto`, `cuda`, `cpu`, `mps`) |
-| `--wandb-project` | `diabetic-retinopathy-screening` | W&B project name |
-| `--no-wandb` | `False` | Disable W&B online tracking |
-| `--save-dir` | `models` | Directory for model checkpoints |
-| `--results-dir` | `results` | Directory for benchmark metric CSV tables |
+For model export:
+
+```bash
+pip install "fastdrs[export]"
+```
+
+## Build a model
+
+```python
+from fastdrs.models import build_model
+
+model = build_model(
+    architecture="mobilenet_v2",
+    num_classes=5,
+    pretrained=True,
+)
+
+print(model)
+```
 
 ---
 
-## 10. Deployment
+# Deployment
 
 A trained model is not considered the final deliverable by itself.
 
-The selected model will be integrated into a usable inference system.
+The project is designed to move from research experimentation to a usable inference system.
 
-Two deployment paths are being considered.
-
-### Option A — Android
+The target deployment architecture is:
 
 ```text
-Android Application
-        │
-        ▼
-Fundus Image
-        │
-        ▼
-Preprocessing
-        │
-        ▼
-ML Model
-        │
-        ▼
-Prediction
-        │
-        ▼
-Severity / Referral Risk
+                    Training
+                       │
+                       ▼
+                 PyTorch Model
+                       │
+                       ▼
+            Metadata-Aware Checkpoint
+                       │
+                       ▼
+                 Model Export
+                       │
+                       ▼
+                    LiteRT
+                       │
+                       ▼
+                  .tflite Model
+                       │
+                       ▼
+              Android Application
 ```
 
-Potential technologies:
+## Android
 
-* Kotlin
-* Jetpack Compose
-* ONNX Runtime
-* TensorFlow Lite
+The Android deployment path is designed around local inference:
 
-### Option B — API
+```text
+Fundus Image
+     │
+     ▼
+Preprocessing
+     │
+     ▼
+LiteRT Model
+     │
+     ▼
+5-Class Prediction
+     │
+     ▼
+Severity / Screening Result
+```
+
+The objective is to investigate whether inference can be performed locally without requiring continuous network connectivity.
+
+## API
+
+A server-side inference API remains an alternative deployment path:
 
 ```text
 Client
@@ -357,7 +534,7 @@ FastAPI
 Preprocessing
   │
   ▼
-Trained Model
+Model
   │
   ▼
 Prediction
@@ -366,39 +543,179 @@ Prediction
 JSON Response
 ```
 
-Potential API stack:
-
-* Python
-* FastAPI
-* Uvicorn
-* PyTorch / Hugging Face
-
-The final deployment path will be selected after evaluating the trained model's framework, size, conversion requirements, and inference performance.
+The final deployment configuration depends on model size, inference performance, conversion reliability, and application requirements.
 
 ---
 
-## 11. Deployment-Oriented Model Selection
+# Deployment-Oriented Model Selection
 
 The final model will not necessarily be the model with the highest raw accuracy.
-
-A model-selection framework will consider:
 
 | Criterion                | Importance  |
 | ------------------------ | ----------- |
 | Sensitivity              | High        |
 | Specificity              | High        |
-| F1 score                 | High        |
+| Macro F1                 | High        |
 | Generalization           | High        |
 | Model size               | Medium–High |
 | Parameter count          | Medium      |
 | Inference latency        | Medium–High |
 | Deployment compatibility | High        |
 
-The goal is to identify a model that provides an appropriate balance between **screening performance and practical deployment requirements**.
+The goal is to identify a model that provides an appropriate balance between:
+
+```text
+Clinical Relevance
+        +
+Predictive Performance
+        +
+Computational Efficiency
+        +
+Deployment Feasibility
+```
 
 ---
 
-## 12. Economic Rationale
+# System Architecture
+
+The target end-to-end system is:
+
+```text
+                    ┌────────────────────┐
+                    │   Fundus Image     │
+                    └─────────┬──────────┘
+                              │
+                              ▼
+                    ┌────────────────────┐
+                    │   Preprocessing    │
+                    └─────────┬──────────┘
+                              │
+                              ▼
+                    ┌────────────────────┐
+                    │   Trained Model    │
+                    └─────────┬──────────┘
+                              │
+                              ▼
+                    ┌────────────────────┐
+                    │    Prediction      │
+                    └─────────┬──────────┘
+                              │
+                    ┌─────────┴─────────┐
+                    ▼                   ▼
+             Severity Estimate     Confidence
+                    │
+                    ▼
+             Screening / Triage
+               Recommendation
+```
+
+The intended role of the model is **decision support**, not autonomous diagnosis.
+
+---
+
+# Project Structure
+
+The repository is organized around reusable ML infrastructure, research experiments, results, and deployment.
+
+```text
+diabetic-retinopathy-screening/
+│
+├── README.md
+├── pyproject.toml
+├── uv.lock
+│
+├── src/
+│   └── fastdrs/
+│       ├── __init__.py
+│       ├── data.py
+│       ├── preprocessing.py
+│       ├── models.py
+│       ├── training.py
+│       ├── evaluation.py
+│       │
+│       ├── inference/
+│       │   ├── __init__.py
+│       │   ├── base.py
+│       │   ├── prediction.py
+│       │   ├── pytorch.py
+│       │   └── litert.py
+│       │
+│       └── export/
+│           ├── __init__.py
+│           └── litert.py
+│
+├── notebooks/
+│
+├── data/
+│
+├── models/
+│
+├── results/
+│
+├── docs/
+│
+└── deployment/
+    └── android/
+```
+
+The package contains reusable ML functionality.
+
+The notebooks, results, and deployment directories contain project-specific experimentation and application work.
+
+---
+
+# Research Background
+
+The project builds on work completed during the Marconi internship.
+
+## Deep-learning foundations
+
+* Neural-network mechanics
+* Forward propagation
+* Backpropagation
+* Gradient descent
+* Keras
+* PyTorch
+* MNIST classification
+
+## Transfer learning
+
+* MobileNetV2
+* Custom PyTorch datasets
+* DataLoader pipelines
+* Image transforms
+
+## Architecture benchmarking
+
+### ResNet vs DenseNet
+
+https://github.com/MichaelMukiibi/resnet-v-densenet
+
+### ConvNeXt vs Swin
+
+https://github.com/MichaelMukiibi/convnext-v-swin
+
+## Hugging Face vision pipeline
+
+### Drone Landing Safety
+
+https://github.com/MichaelMukiibi/drone-landing-safety
+
+## Additional work
+
+### Omniglot
+
+https://github.com/MichaelMukiibi/omniglot
+
+### Electricity Consumption
+
+https://github.com/MichaelMukiibi/electricity-consumption
+
+These projects informed the reusable training, dataset, evaluation, and experiment-tracking infrastructure now being consolidated into `fastdrs`.
+
+---
+
+# Economic Rationale
 
 The project is motivated by an operational healthcare problem rather than model development for its own sake.
 
@@ -415,246 +732,15 @@ The economic hypothesis is:
 
 > **If AI can reliably identify higher-risk retinal images for specialist review, limited ophthalmology resources can potentially be allocated more efficiently.**
 
-This project does **not** attempt to quantify the real-world cost savings without clinical and operational validation. Economic impact remains a hypothesis requiring field evaluation.
+This project does **not** claim quantified real-world cost savings without clinical and operational validation.
+
+Economic impact remains a hypothesis requiring field evaluation.
 
 ---
 
-## 13. System Architecture
+# Current Status
 
-The target system is:
-
-```text
-                   ┌─────────────────┐
-                   │  Fundus Image   │
-                   └────────┬────────┘
-                            │
-                            ▼
-                   ┌─────────────────┐
-                   │  Preprocessing  │
-                   └────────┬────────┘
-                            │
-                            ▼
-                   ┌─────────────────┐
-                   │  Trained Model  │
-                   └────────┬────────┘
-                            │
-                            ▼
-                   ┌─────────────────┐
-                   │   Prediction    │
-                   └────────┬────────┘
-                            │
-              ┌─────────────┴─────────────┐
-              ▼                           ▼
-      Severity Estimate             Confidence
-              │
-              ▼
-      Screening / Triage
-      Recommendation
-```
-
----
-
-## 14. Project Structure
-
-The final repository is expected to evolve toward:
-
-```text
-marconi-diabetic-retinopathy/
-│
-├── README.md
-├── requirements.txt
-├── train.py                  # Single-command training script (HF & W&B)
-│
-├── data/
-│   └── README.md
-│
-├── notebooks/
-│   ├── 01_eda.ipynb
-│   ├── 02_baseline.ipynb
-│   ├── 03_model_comparison.ipynb
-│   └── 04_final_model.ipynb
-│
-├── src/
-│   ├── __init__.py
-│   ├── data.py
-│   ├── preprocessing.py
-│   ├── models.py
-│   ├── train.py
-│   └── evaluate.py
-│
-├── models/
-│   └── README.md
-│
-├── results/
-│   ├── metrics.csv
-│   ├── model_comparison.csv
-│   └── figures/
-│
-├── deployment/
-│   ├── api/
-│   └── android/
-│
-└── presentation/
-    └── README.md
-```
-
-The exact structure will be adapted from the existing Marconi repositories rather than unnecessarily rebuilding working code.
-
----
-
-## 15. Existing Marconi Work
-
-This project builds upon work completed during the internship.
-
-### Deep-learning foundations
-
-* Neural-network mechanics
-* Forward propagation
-* Backpropagation
-* Gradient descent
-* Keras
-* PyTorch
-* MNIST classification
-
-### Transfer learning
-
-* MobileNetV2
-* Custom PyTorch datasets
-* DataLoader pipelines
-* Image transforms
-
-### Architecture benchmarking
-
-Existing repositories:
-
-**ResNet vs DenseNet**
-
-[https://github.com/MichaelMukiibi/resnet-v-densenet.git](https://github.com/MichaelMukiibi/resnet-v-densenet.git)
-
-**ConvNeXt vs Swin**
-
-[https://github.com/MichaelMukiibi/convnext-v-swin.git](https://github.com/MichaelMukiibi/convnext-v-swin.git)
-
-### Hugging Face vision pipeline
-
-Existing repository:
-
-**Drone Landing Safety**
-
-[https://github.com/MichaelMukiibi/drone-landing-safety.git](https://github.com/MichaelMukiibi/drone-landing-safety.git)
-
-### Additional repositories
-
-**Omniglot**
-
-[https://github.com/MichaelMukiibi/omniglot.git](https://github.com/MichaelMukiibi/omniglot.git)
-
-**Electricity Consumption**
-
-[https://github.com/MichaelMukiibi/electricity-consumption.git](https://github.com/MichaelMukiibi/electricity-consumption.git)
-
-The first development task is to inspect these repositories and reuse the most mature training/evaluation infrastructure.
-
----
-
-## 16. Immediate Execution Plan
-
-### Phase 1 — Repository inspection
-
-Inspect:
-
-1. `convnext-v-swin`
-2. `resnet-v-densenet`
-3. `drone-landing-safety`
-
-Identify:
-
-* Training scripts
-* Dataset loaders
-* Hugging Face integration
-* W&B integration
-* Evaluation functions
-* Existing checkpoints
-* Preprocessing functions
-* Existing plots
-
-### Phase 2 — APTOS integration
-
-Adapt the strongest existing pipeline to APTOS.
-
-Perform:
-
-* Dataset download
-* Data validation
-* EDA
-* Train/validation split
-* Preprocessing
-* Baseline training
-
-### Phase 3 — Model comparison
-
-Train feasible candidates:
-
-* ResNet
-* DenseNet
-* ConvNeXt
-* Swin
-
-Do not attempt unnecessarily large experiments given the closeout deadline.
-
-### Phase 4 — Evaluation
-
-Generate:
-
-* Confusion matrices
-* Accuracy
-* Precision
-* Recall
-* Sensitivity
-* Specificity
-* F1
-* Model size
-* Inference latency
-
-### Phase 5 — Final model
-
-Select a model using:
-
-```text
-Clinical relevance
-+
-Predictive performance
-+
-Computational efficiency
-+
-Deployment feasibility
-```
-
-### Phase 6 — Deployment
-
-Implement either:
-
-* Android inference
-
-or
-
-* FastAPI inference service
-
-### Phase 7 — Closeout
-
-Prepare:
-
-* Working demo
-* Final repository
-* Results
-* Presentation
-* Technical Q&A preparation
-
----
-
-## 17. Current Status
-
-### Completed
+## Completed
 
 * Deep-learning foundation training
 * PyTorch training
@@ -665,30 +751,82 @@ Prepare:
 * W&B experiment tracking
 * Hugging Face vision workflows
 * EDA workflow development
+* Reusable `fastdrs` package
+* Multi-architecture model factory
+* Fundus preprocessing utilities
+* Dataset/DataLoader pipeline
+* Training pipeline
+* Early stopping
+* Metadata-aware model checkpoints
+* Model evaluation pipeline
+* PyPI package distribution
+* Initial PyTorch/LiteRT deployment architecture
 
-### In progress
+## In progress
 
-* Selecting the final economically meaningful capstone
-* Adapting existing vision pipelines to APTOS 2019
-* Model benchmarking
+* Architecture benchmarking on APTOS
 * Final model selection
-* Deployment
+* Remote/pretrained model distribution
+* Stable inference APIs
+* LiteRT export and inference workflows
+* Android integration
+* End-to-end screening demonstration
 
-### Pending
+## Pending
 
-* Final trained APTOS model
-* Final evaluation results
-* Deployment implementation
-* End-to-end demo
-* Closeout presentation
+* Final validated APTOS model
+* Final benchmark results
+* External validation
+* Complete Android deployment
+* End-to-end demonstration
+* Clinical/operational validation
 
 ---
 
-## 18. Limitations
+# Roadmap
 
-This prototype has important limitations.
+```text
+[x] Deep-learning foundation
+[x] Transfer learning
+[x] Architecture benchmarking infrastructure
+[x] Dataset pipeline
+[x] Preprocessing pipeline
+[x] Training pipeline
+[x] Evaluation pipeline
+[x] Experiment tracking
+[x] PyPI package
+[x] Metadata-aware checkpoints
+[x] Early stopping
+[ ] Expanded pretrained model distribution
+[ ] Remote model registry
+[ ] Stable inference API
+[ ] LiteRT export
+[ ] LiteRT inference
+[ ] Android integration
+[ ] External validation
+[ ] Prospective clinical validation
+```
 
-* APTOS is a relatively small dataset compared with large-scale medical imaging datasets.
+Future research may include:
+
+* External validation on additional retinal datasets
+* Model confidence calibration
+* Explainability methods such as Grad-CAM
+* Model quantization
+* On-device inference optimization
+* Offline-first deployment
+* Human-in-the-loop referral workflows
+* Integration with health-information systems
+* Health-economic evaluation
+* Field testing in resource-constrained healthcare settings
+
+---
+
+# Limitations
+
+This remains a research prototype with important limitations.
+
+* APTOS is relatively small compared with large-scale medical-imaging datasets.
 * Dataset distribution may not represent the target population.
 * Dataset labels may contain uncertainty.
 * Image quality can vary substantially.
@@ -698,66 +836,64 @@ This prototype has important limitations.
 * Regulatory approval would be required for clinical deployment.
 * Economic impact has not yet been empirically demonstrated.
 
-Therefore, the system should be presented as an **AI-assisted research prototype**, not as an autonomous diagnostic product.
+Therefore, the system should be presented as an **AI-assisted research prototype**, not an autonomous diagnostic product.
 
 ---
 
-## 19. Future Work
+# Expected Capstone Outcome
 
-Potential future development includes:
-
-* External validation on additional retinal datasets
-* Calibration of model confidence
-* Explainability methods such as Grad-CAM
-* Model quantization
-* ONNX/TensorFlow Lite conversion
-* On-device inference
-* Offline-first deployment
-* Prospective clinical validation
-* Integration with existing health-information systems
-* Human-in-the-loop referral workflows
-* Health-economic evaluation
-* Field testing in resource-constrained healthcare settings
-
----
-
-## 20. Expected Capstone Outcome
-
-The final deliverable should demonstrate the complete ML lifecycle:
+The project aims to demonstrate the complete ML lifecycle:
 
 ```text
 REAL-WORLD PROBLEM
-       ↓
-DATA
-       ↓
-EDA
-       ↓
+        ↓
+      DATA
+        ↓
+       EDA
+        ↓
 MODEL DEVELOPMENT
-       ↓
+        ↓
 EXPERIMENT TRACKING
-       ↓
+        ↓
 ARCHITECTURE BENCHMARKING
-       ↓
+        ↓
 CLINICALLY RELEVANT EVALUATION
-       ↓
+        ↓
 MODEL SELECTION
-       ↓
+        ↓
 DEPLOYMENT
-       ↓
+        ↓
 WORKING DEMONSTRATION
 ```
 
 The central objective is not merely to achieve a high classification score.
 
-The project aims to demonstrate that the intern can take a meaningful problem from **research question → machine-learning experimentation → engineering implementation → deployable prototype**.
+The project demonstrates the progression from:
+
+> **research question → machine-learning experimentation → reusable engineering infrastructure → model evaluation → deployment-oriented prototype**
 
 ---
 
-## 21. Project Status
+# License
 
-**Status:** Active development
-**Intern:** MUKIIBI MICHAEL KIRINNYA
-**Capstone:** AI-Assisted Diabetic Retinopathy Screening & Triage
-**Dataset:** APTOS 2019 Blindness Detection
-**Primary ML Task:** Five-class diabetic-retinopathy severity classification
-**Deployment Requirement:** Android application **or** inference API
+This project is licensed under the **MIT License**.
+
+See [`LICENSE`](LICENSE) for details.
+
+---
+
+# Author
+
+**Michael Mukiibi**
+
+GitHub: [@MichaelMukiibi](https://github.com/MichaelMukiibi)
+
+---
+
+# Disclaimer
+
+`fastdrs` and the surrounding diabetic-retinopathy screening system are research and engineering projects.
+
+They are **not medical devices** and do not provide autonomous clinical diagnoses. Model predictions should not be used as a substitute for professional medical diagnosis, treatment, or clinical decision-making.
+
+Any clinical deployment would require appropriate external validation, clinical evaluation, regulatory review, and integration with qualified healthcare professionals.
