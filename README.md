@@ -664,57 +664,6 @@ The notebooks, results, and deployment directories contain project-specific expe
 
 ---
 
-# Research Background
-
-The project builds on work completed during the Marconi internship.
-
-## Deep-learning foundations
-
-* Neural-network mechanics
-* Forward propagation
-* Backpropagation
-* Gradient descent
-* Keras
-* PyTorch
-* MNIST classification
-
-## Transfer learning
-
-* MobileNetV2
-* Custom PyTorch datasets
-* DataLoader pipelines
-* Image transforms
-
-## Architecture benchmarking
-
-### ResNet vs DenseNet
-
-https://github.com/MichaelMukiibi/resnet-v-densenet
-
-### ConvNeXt vs Swin
-
-https://github.com/MichaelMukiibi/convnext-v-swin
-
-## Hugging Face vision pipeline
-
-### Drone Landing Safety
-
-https://github.com/MichaelMukiibi/drone-landing-safety
-
-## Additional work
-
-### Omniglot
-
-https://github.com/MichaelMukiibi/omniglot
-
-### Electricity Consumption
-
-https://github.com/MichaelMukiibi/electricity-consumption
-
-These projects informed the reusable training, dataset, evaluation, and experiment-tracking infrastructure now being consolidated into `fastdrs`.
-
----
-
 # Economic Rationale
 
 The project is motivated by an operational healthcare problem rather than model development for its own sake.
@@ -838,47 +787,9 @@ This remains a research prototype with important limitations.
 
 Therefore, the system should be presented as an **AI-assisted research prototype**, not an autonomous diagnostic product.
 
----
-
-# Expected Capstone Outcome
-
-The project aims to demonstrate the complete ML lifecycle:
-
-```text
-REAL-WORLD PROBLEM
-        ↓
-      DATA
-        ↓
-       EDA
-        ↓
-MODEL DEVELOPMENT
-        ↓
-EXPERIMENT TRACKING
-        ↓
-ARCHITECTURE BENCHMARKING
-        ↓
-CLINICALLY RELEVANT EVALUATION
-        ↓
-MODEL SELECTION
-        ↓
-DEPLOYMENT
-        ↓
-WORKING DEMONSTRATION
-```
-
-The central objective is not merely to achieve a high classification score.
-
-The project demonstrates the progression from:
-
-> **research question → machine-learning experimentation → reusable engineering infrastructure → model evaluation → deployment-oriented prototype**
-
----
-
 # License
 
 This project is licensed under the **MIT License**.
-
-See [`LICENSE`](LICENSE) for details.
 
 ---
 
