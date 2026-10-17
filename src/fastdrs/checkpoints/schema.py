@@ -53,7 +53,7 @@ class PreprocessingConfig:
     Image preprocessing configuration stored in a checkpoint.
     """
 
-    image_size: int  = 224
+    img_size: int  = 224
 
     mean: tuple[
         float,
@@ -80,7 +80,7 @@ class PreprocessingConfig:
     def to_dict(self) -> dict[str, Any]:
         """Serialize preprocessing configuration."""
         return {
-            "image_size": int(self.image_size),
+            "image_size": int(self.img_size),
             "mean": list(
                 self.mean
             ),
@@ -97,7 +97,7 @@ class PreprocessingConfig:
     ) -> "PreprocessingConfig":
         """Construct preprocessing configuration."""
         return cls(
-            image_size=224,
+            img_size=224,
             mean=tuple(
                 data.get(
                     "mean",

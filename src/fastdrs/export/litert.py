@@ -48,7 +48,7 @@ def export_litert(
         loaded = load_checkpoint(checkpoint_path, device="cpu")
 
         model = loaded.model
-        resolved_img_size = loaded.preprocessing.image_size
+        resolved_img_size = loaded.preprocessing.img_size
     else:
         # Legacy raw PyTorch state_dict
         if architecture is None:

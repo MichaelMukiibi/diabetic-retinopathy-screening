@@ -44,7 +44,7 @@ path = save_checkpoint(
     "test-model.fastdrs",
     classes=classes,
     preprocessing=PreprocessingConfig(
-        image_size=224,
+        img_size=224,
     ),
     metadata={
         "dataset": "APTOS 2019",
