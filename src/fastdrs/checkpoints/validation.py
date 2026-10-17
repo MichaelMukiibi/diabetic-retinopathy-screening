@@ -256,7 +256,7 @@ def _validate_preprocessing(
         )
 
     required = {
-        "image_size",
+        "img_size",
         "mean",
         "std",
         "ben_graham",
