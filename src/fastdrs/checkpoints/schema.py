@@ -80,7 +80,7 @@ class PreprocessingConfig:
     def to_dict(self) -> dict[str, Any]:
         """Serialize preprocessing configuration."""
         return {
-            "image_size": int(self.img_size),
+            "img_size": int(self.img_size),
             "mean": list(
                 self.mean
             ),
