@@ -417,6 +417,7 @@ dependencies = [
     { name = "torch", version = "2.13.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'darwin'" },
     { name = "torchvision", version = "0.28.0", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform == 'darwin'" },
     { name = "torchvision", version = "0.28.0+cpu", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "sys_platform != 'darwin'" },
+    { name = "typer" },
 ]
 
 [package.optional-dependencies]
@@ -462,6 +463,7 @@ requires-dist = [
     { name = "torch", marker = "extra == 'training'" },
     { name = "torchvision", specifier = ">=0.28.0" },
     { name = "torchvision", marker = "extra == 'training'" },
+    { name = "typer", specifier = ">=0.27.1" },
     { name = "wandb", marker = "extra == 'training'" },
 ]
 provides-extras = ["training", "inference", "litert"]

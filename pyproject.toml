@@ -16,6 +16,7 @@ dependencies = [
     "pillow",
     "torch>=2.13.0",
     "torchvision>=0.28.0",
+    "typer>=0.27.1",
 ]
 
 [project.optional-dependencies]
@@ -37,6 +38,9 @@ inference = [
 litert = [
     "litert_torch",
 ]
+
+[project.scripts]
+fastdrs = "fastdrs.cli.main:app"
 
 [dependency-groups]
 
