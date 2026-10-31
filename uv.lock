@@ -405,7 +405,7 @@ wheels = [
 
 [[package]]
 name = "fastdrs"
-version = "0.1.14"
+version = "0.1.15"
 source = { editable = "." }
 dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://download.pytorch.org/whl/cpu" }, marker = "python_full_version < '3.11'" },

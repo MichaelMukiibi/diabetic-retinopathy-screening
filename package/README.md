@@ -8,6 +8,13 @@ The package is designed to separate reusable ML functionality from the experimen
 
 > **Status:** Active development (`0.1.x`)
 
+## What's new in 0.1.15
+
+* Run the CLI with `python -m fastdrs` as well as `fastdrs`.
+* Preserve saved checkpoint image sizes during loading and inference.
+* Export self-defining `.fastdrs` checkpoints using their stored model settings.
+* Find CLI examples, JSON output options, and corrected LiteRT installation instructions below.
+
 ---
 
 ## Features
@@ -110,6 +117,12 @@ Deployment components include:
 
 LiteRT functionality is optional so users who only need the core ML toolkit do not need to install the additional runtime or conversion dependencies.
 
+### Command-line interface
+
+List supported architectures, inspect `.fastdrs` checkpoints, predict from retinal
+images, and export models to LiteRT directly from your terminal. Model listing,
+checkpoint inspection, and prediction support JSON output for scripts.
+
 ---
 
 ## Installation
@@ -126,7 +139,7 @@ Or with `uv`:
 uv add fastdrs
 ```
 
-The basic installation contains the lightweight core functionality.
+The basic installation includes PyTorch, TorchVision, image preprocessing, and the CLI.
 
 ---
 
@@ -165,15 +178,16 @@ pip install "fastdrs[inference]"
 
 ---
 
-### LiteRT inference
+### LiteRT export dependencies
 
-LiteRT inference dependencies can be installed separately:
+Install the optional LiteRT conversion stack with:
 
 ```bash
 pip install "fastdrs[litert]"
 ```
 
-This keeps the core package lightweight while allowing deployment environments to install only the runtime they require.
+This extra installs `litert_torch`. LiteRT runtime inference may require a
+separate compatible interpreter in the deployment environment.
 
 ---
 
@@ -196,6 +210,56 @@ uv sync
 ---
 
 ## Quick Start
+
+### Use the CLI
+
+```bash
+fastdrs --help
+fastdrs --version
+fastdrs models
+fastdrs models --json
+```
+
+The same commands are available through `python -m fastdrs`:
+
+```bash
+python -m fastdrs --help
+```
+
+Inspect a self-defining checkpoint, including its architecture, class mapping,
+preprocessing configuration, and metadata:
+
+```bash
+fastdrs inspect model.fastdrs
+fastdrs inspect model.fastdrs --json
+```
+
+Predict from a retinal image using the checkpoint's class labels and preprocessing:
+
+```bash
+fastdrs predict model.fastdrs retina.jpg
+fastdrs predict model.fastdrs retina.jpg --json
+fastdrs predict model.fastdrs retina.jpg --device cuda:0
+```
+
+Prediction defaults to CPU. CUDA requires a compatible PyTorch installation and GPU.
+JSON predictions contain `class_id`, `label`, `confidence`, and a mapping of class
+labels to probabilities.
+
+Export a checkpoint after installing `fastdrs[litert]` in a compatible environment:
+
+```bash
+fastdrs export model.fastdrs --output model.tflite
+```
+
+Self-defining checkpoints supply their architecture and input image size automatically.
+For a legacy PyTorch state dictionary, provide the architecture and matching model settings:
+
+```bash
+fastdrs export weights.pth --architecture resnet18 --num-classes 5 --img-size 224 --dropout-rate 0.2 --output model.tflite
+```
+
+Use `fastdrs <command> --help` to see each command's options.
 
 ### Build a model
 
@@ -395,18 +459,15 @@ A checkpoint contains the model weights together with information needed to iden
 Conceptually:
 
 ```text
-checkpoint.pth
+model.fastdrs
 │
-├── model_state_dict
-├── architecture
-├── num_classes
-├── img_size
-├── class_names
-├── dataset_name
-├── epoch
-├── monitor
-├── best_metric
-└── checkpoint_version
+├── format
+├── schema_version
+├── model
+├── classes
+├── preprocessing
+├── metadata
+└── state_dict
 ```
 
 This is important for deployment because inference code does not have to rely on undocumented assumptions about which architecture or class mapping was used to produce a model.
@@ -414,18 +475,23 @@ This is important for deployment because inference code does not have to rely on
 ### Loading a checkpoint
 
 ```python
-from fastdrs.training import load_checkpoint
+from fastdrs import load_checkpoint
 
 checkpoint = load_checkpoint(
-    "models/resnet18_best.pth",
+    "models/resnet18.fastdrs",
 )
 
-print(checkpoint["architecture"])
-print(checkpoint["class_names"])
-print(checkpoint["img_size"])
+print(checkpoint.architecture)
+print(checkpoint.classes)
+print(checkpoint.preprocessing.img_size)
+
+prediction = checkpoint.predict("retina.jpg")
+print(prediction.to_dict())
 ```
 
-The checkpoint loader also supports legacy checkpoints containing only a PyTorch `state_dict`.
+The `.fastdrs` loader reconstructs the model and preserves the saved preprocessing
+configuration, including non-default image sizes. Legacy state dictionaries can
+be exported through the CLI with explicit architecture settings.
 
 ---
 
@@ -567,20 +633,17 @@ The package separates model development, inference, and export so that deploymen
 LiteRT export functionality is available as an optional component:
 
 ```bash
-pip install "fastdrs[export]"
+pip install "fastdrs[litert]"
 ```
 
 The resulting `.tflite` model can then be integrated into an Android application for on-device inference.
 
 ### LiteRT inference
 
-LiteRT runtime support is kept separate from the export stack:
+LiteRT inference requires a compatible runtime interpreter. The `litert` extra
+above supplies the conversion stack; check the target environment's runtime support
+before deploying a converted model.
 
-```bash
-pip install "fastdrs[litert]"
-```
-
-This distinction allows a deployment environment to install the runtime without installing the model-conversion toolchain.
 
 ---
 
@@ -730,6 +793,10 @@ Planned and ongoing development includes:
 * [x] Metadata-aware checkpoints
 * [x] Model evaluation metrics
 * [x] PyPI distribution
+* [x] CLI model listing, checkpoint inspection, and image prediction
+* [x] JSON output for model listing, inspection, and prediction
+* [x] CLI LiteRT export for self-defining and legacy checkpoints
+* [x] `python -m fastdrs` entry point
 * [ ] Expanded pretrained model distribution
 * [ ] Checkpoint registry / remote model loading
 * [ ] Stable PyTorch inference API
