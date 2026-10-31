@@ -8,6 +8,13 @@ The package is designed to separate reusable ML functionality from the experimen
 
 > **Status:** Active development (`0.1.x`)
 
+## What's new in 0.1.15
+
+* Run the CLI with `python -m fastdrs` as well as `fastdrs`.
+* Preserve saved checkpoint image sizes during loading and inference.
+* Export self-defining `.fastdrs` checkpoints using their stored model settings.
+* Find CLI examples, JSON output options, and corrected LiteRT installation instructions below.
+
 ---
 
 ## Features
