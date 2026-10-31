@@ -44,7 +44,7 @@ def export_litert(
         raise ValueError("LiteRT output must have .tflite extension")
 
     # 1. Load model architecture and preprocessing parameters
-    if output_path.suffix.lower() == ".fastdrs":
+    if checkpoint_path.suffix.lower() == ".fastdrs":
         loaded = load_checkpoint(checkpoint_path, device="cpu")
 
         model = loaded.model
