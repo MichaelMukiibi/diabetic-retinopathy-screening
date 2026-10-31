@@ -123,10 +123,31 @@ Optional dependency groups are intended for specific workflows:
 pip install "fastdrs[training]"
 pip install "fastdrs[inference]"
 pip install "fastdrs[litert]"
-pip install "fastdrs[export]"
 ```
 
 Confirm the currently published package extras and implementation status before relying on a particular workflow.
+
+### Command-line usage
+
+The CLI supports model listing, checkpoint inspection, prediction, and LiteRT export:
+
+```bash
+fastdrs --help
+fastdrs models
+fastdrs inspect model.fastdrs
+fastdrs predict model.fastdrs retina.jpg --json
+fastdrs export model.fastdrs --output model.tflite
+```
+
+You can also run the CLI through the Python interpreter used to install the package:
+
+```bash
+python -m fastdrs --help
+```
+
+LiteRT export requires `pip install "fastdrs[litert]"` in a compatible environment.
+Self-defining `.fastdrs` checkpoints supply their architecture and input image size;
+legacy PyTorch checkpoints require `--architecture` and accept `--img-size`.
 
 Build a model:
 
