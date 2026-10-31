@@ -73,7 +73,7 @@ class FastDRSCheckpoint:
         """
 
         return get_transforms(
-            img_size=self.preprocessing.image_size,
+            img_size=self.preprocessing.img_size,
             is_train=False,
             mean=self.preprocessing.mean,
             std=self.preprocessing.std,

@@ -23,14 +23,14 @@ def export_litert(
     For self-defining checkpoints, architecture, preprocessing parameters are extracted automatically
 
     Legacy checkpoints require an explicit architecture and preprocessing parameters to be provided.
-    Requires fastdrs[export] dependencies.
+    Requires fastdrs[litert] dependencies.
     """
     try:
         import litert_torch
     except ImportError:
         raise ImportError(
             "LiteRT export requires additional dependencies. "
-            "Install them with: uv add 'fastdrs[export]'"
+            "Install them with: pip install 'fastdrs[litert]'"
         )
 
     checkpoint_path = Path(checkpoint)
@@ -44,7 +44,7 @@ def export_litert(
         raise ValueError("LiteRT output must have .tflite extension")
 
     # 1. Load model architecture and preprocessing parameters
-    if output_path.suffix.lower() == ".fastdrs":
+    if checkpoint_path.suffix.lower() == ".fastdrs":
         loaded = load_checkpoint(checkpoint_path, device="cpu")
 
         model = loaded.model

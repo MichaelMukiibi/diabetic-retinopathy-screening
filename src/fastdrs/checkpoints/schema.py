@@ -97,7 +97,7 @@ class PreprocessingConfig:
     ) -> "PreprocessingConfig":
         """Construct preprocessing configuration."""
         return cls(
-            img_size=224,
+            img_size=int(data.get("img_size", 224)),
             mean=tuple(
                 data.get(
                     "mean",
