@@ -100,8 +100,8 @@ def export_command(
             f"[red]Export dependency error:[/red] {exc}"
         )
         error_console.print(
-            "Install the export extra in this project "
-            "with: uv sync --extra export"
+            "Install the LiteRT extra "
+            "with: pip install 'fastdrs[litert]'"
         )
         raise typer.Exit(code=1) from exc
 
